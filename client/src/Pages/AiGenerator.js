@@ -1,18 +1,27 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../Components/Navbar'
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs"
 import SyntaxHighlighter from "react-syntax-highlighter"
+import { toast } from "react-hot-toast"
+import { useNavigate } from 'react-router-dom'
 
 const AiGenerator = () => {
   const [text, setText] = useState("")
   const [data, setData] = useState()
   const [copy, setCopy] = useState(false)
+  const [file, setFile] = useState({
+    filename: data?.name,
+    code: data?.code,
+    lang: data?.lang
+  })
   const [loading, setLoading] = useState()
+  const user = JSON.parse(localStorage.getItem("user"))
+  const navigate = useNavigate()
 
   const handleSubmit = async () => {
     try {
       setLoading(true)
-      const response = await fetch("https://aimy-backend.onrender.com/create-code", {
+      const response = await fetch("http://localhost:3333/create-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -20,15 +29,55 @@ const AiGenerator = () => {
         body: JSON.stringify({ text: text })
       });
       const data = await response.json();
+      setFile({
+        filename: data?.name,
+        code: data?.code,
+        lang: data?.lang
+      })
       setData(data);
       setCopy(true);
       setText("");
     } catch (error) {
       console.error(error);
+      setCopy(false)
     } finally {
       setLoading(false);
     }
   };
+
+  const handleNewFile = async () => {
+    if (!user) {
+      navigate("/signup")
+    } else {
+      const response = await fetch(`http://localhost:3333/${user?.username}/files`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(file)
+      })
+
+      const data = await response.json()
+
+      toast.promise(
+        Promise.resolve(data),
+        {
+          loading: "Saving...",
+          success: "Successfully Saved!",
+          error: "Failed to Save!"
+        },
+        {
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+            padding: '10px',
+            margin: '10px'
+          }
+        }
+      )
+    }
+  }
 
   return (
     <div className='ai_body'>
@@ -46,8 +95,16 @@ const AiGenerator = () => {
             cursor: copy ? "pointer" : "not-allowed",
           }}
             onClick={() => {
-              navigator.clipboard.writeText(data.code)
-              setCopy(data?.code)
+              if (data?.code) {
+                navigator.clipboard.writeText(data.code)
+                toast.success("Successfully Copied Code!", {
+                  style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                  }
+                })
+              }
             }}
           >
             <ion-icon name="clipboard-outline" className="copy_icon" size="midium" />
@@ -64,15 +121,22 @@ const AiGenerator = () => {
             </p>
           </div>
         ) : (
-          <SyntaxHighlighter language='python' style={atomOneDark} customStyle={{
-            width: "750px",
-            height: "500px",
-            padding: "25px",
-            borderRadius: "15px"
-          }}
-            wrapLongLines={true}>
-            {data?.code}
-          </SyntaxHighlighter>
+          <div className='ai_res_div' style={{
+            position: "relative"
+          }}>
+            {data?.code &&
+              <ion-icon onClick={() => handleNewFile()} name="save-outline"></ion-icon>}
+            <SyntaxHighlighter language='python' style={atomOneDark} customStyle={{
+              width: "750px",
+              height: "500px",
+              padding: "25px",
+              borderBottomLeftRadius: "15px",
+              borderBottomRightRadius: "15px",
+            }}
+              wrapLongLines={true}>
+              {data?.code}
+            </SyntaxHighlighter>
+          </div>
         )}
       </div>
     </div>

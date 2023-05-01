@@ -27,7 +27,19 @@ html {
 
 .home_body {
     width: 100vw;
+    min-height: 100vh;
+    height: 100%;
+    align-items: center;
+    background-color: #1A1A1A;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.cst_body {
+    width: 100vw;
     height: 100vh;
+    align-items: center;
     background-color: #1A1A1A;
     z-index: 0;
     display: flex;
@@ -333,7 +345,7 @@ canvas {
     flex-direction: column;
     position: relative;
     z-index: 2;
-    background-color: #2f2f2f;
+    background-color: #1A1A1A;
 }
 
 .ai_content {
@@ -356,7 +368,7 @@ canvas {
     padding-bottom: 25px;
     background: linear-gradient(90deg, #FF4E50, #F9D423, #4BAF4F, #FFC107, #7FDBDA, #B10DC9);
     background-size: 600% 600%;
-    animation: gradient 16s ease infinite;
+    animation: gradient 10s ease infinite;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -389,12 +401,14 @@ canvas {
 .ai_input_message {
     width: 100%;
     height: 100%;
-    background-color: #1c1c1c;
+    background-color: transparent;
+    /* border gradient */
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, #FF4E50, #F9D423, #4BAF4F, #FFC107, #7FDBDA, #B10DC9) 1;
     border-radius: 5px;
     display: flex;
     justify-content: center;
     padding-right: 52px;
-    padding-left: 16px;
     align-items: center;
     font-size: 18px;
     font-weight: 600;
@@ -428,7 +442,7 @@ canvas {
 .ai_res_detail {
     display: flex;
     width: 750px;
-    height: 50px;
+    height: 60px;
     justify-content: space-between;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
@@ -446,7 +460,7 @@ canvas {
 }
 
 .copy_button {
-    height: 30px;
+    height: 80%;
     border-radius: 5px;
     display: flex;
     justify-content: center;
@@ -455,6 +469,7 @@ canvas {
     position: relative;
     overflow: hidden;
     transition: 0.5s;
+    padding: 8px;
 }
 
 ion-icon {
@@ -470,7 +485,8 @@ ion-icon {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
     background-color: rgb(40, 44, 52);
 }
 
@@ -501,30 +517,318 @@ ion-icon {
 }
 
 .dot {
-  animation: loading 1s infinite;
-  opacity: 0;
+    animation: loading 1s infinite;
+    opacity: 0;
 }
 
 .dot:nth-child(1) {
-  animation-delay: 0s;
+    animation-delay: 0s;
 }
 
 .dot:nth-child(2) {
-  animation-delay: 0.2s;
+    animation-delay: 0.2s;
 }
 
 .dot:nth-child(3) {
-  animation-delay: 0.4s;
+    animation-delay: 0.4s;
 }
 
 @keyframes loading {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.auth_body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    background-color: #1A1A1A;
+}
+
+.auth_form {
+    width: 750px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background-color: #2f2f2f;
+    padding: 25px;
+}
+
+.auth_form_header {
+    font-size: 24px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 25px;
+}
+
+.auth_form_header h1 {
+    margin: 0;
+}
+
+.auth_form_body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/*
+    <div className='auth_form_body_input'>
+              <label htmlFor='username'>Username</label>
+              <input type='text' name='username' id='username' />
+            </div>
+
+            animated input label and colored border
+*/
+
+.auth_form_body_input {
+    width: 100%;
+    height: 75px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.auth_form_body_input label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 5px;
+}
+
+.auth_form_body_input input {
+    width: 100%;
+    height: 100%;
+    background-color: #1c1c1c;
+    border-radius: 5px;
+    border: 1px solid #1c1c1c;
+    padding: 0 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #FFFFFF;
+    transition: 0.5s;
+}
+
+
+.auth_form_body_button {
+    width: 100%;
+    height: 75px;
+    background-color: #1c1c1c;
+    border-radius: 5px;
+    border: 1px solid #1c1c1c;
+    padding: 0 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #FFFFFF;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.auth_form_body_button:hover {
+    background-color: #2f2f2f;
+    border: 1px solid #2f2f2f;
+}
+
+.auth_form_body_button:active {
+    background-color: #3a404d;
+    border: 1px solid #3a404d;
+}
+
+.ai_res_div ion-icon {
+    position: absolute;
+    font-size: 32px;
+    color: #FFFFFF;
+    opacity: 0.5;
+    right: 12px;
+    bottom: 12px;
+    cursor: pointer;
+}
+
+.files_body {
+    width: 1500px;
+    height: 100%;
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    background-color: #1A1A1A;
+}
+
+.files_body_header {
+    width: 100%;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    background-color: #2f2f2f;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.files_body_header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.files_body_header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.files_body_files {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 50px;
+    overflow-y: auto;
+    background-color: #2f2f2f;
+}
+
+.files_body_file {
+    width: 250px;
+    height: 250px;
+    display: flex;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background-color: #1c1c1c;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.files_body_file:hover {
+    transform: scale(1.05);
+}
+
+.files_body_file img {
+    width: 75px;
+    height: 75px;
+    border-radius: 15px;
+    mix-blend-mode: multiply;
+    margin-bottom: 25px;
+}
+
+.files_body_file p {
+    font-size: 18px;
+    font-weight: 600;
+    color: #3f3f3f;
+    margin: 0;
+}
+
+.editor {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: black;
+    z-index: 2;
+    background-color: #1A1A1A;
+}
+
+.editor_header {
+    width: 100%;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    background-color: transparent;
+}
+
+.editor_header_left {
+    display: flex;
+    align-items: center;
+}
+
+.editor_header_left p {
+    font-size: 24px;
+    font-weight: 600;
+    color: #dfdfdf;
+    margin: 0;
+}
+
+.editor_header_right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.editor_header_right p {
+    font-size: 16px;
+    font-weight: 400;
+    color: #dfdfdf;
+    margin: 0;
+}
+
+.editor_body {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    position: relative;
+}
+
+.editor_body_textarea {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    font-size: 16px;
+    padding: 8px;
+    color: transparent;
+    background-color: transparent;
+}
+
+.ace_editor,
+.ace_editor * {
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", "Droid Sans Mono", "Consolas", monospace !important;
+    letter-spacing: 0 !important;
+}
+
+.new_file_container {
+    display: flex;
+    z-index: 2;
+    gap: 20px;
+}
+
+.new_file_container ion-icon {
+    font-size: 24px;
+    color: #dfdfdf;
+}
+
+.new_file_container ion-icon:hover {
+    color: #4BAF4F;
+    cursor: pointer;
 }
