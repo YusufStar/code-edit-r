@@ -50,4 +50,4 @@ app.post("/create-code", async (req, res) => {
   res.send(completion.data.choices[0].message.content);
 });
 
-app.listen(3333, () => console.log("3333 portunda server çalışıyor!"));
+app.listen(process.env.PORT || 3333, () => console.log("3333 portunda server çalışıyor!"));
