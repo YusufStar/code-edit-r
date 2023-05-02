@@ -5,8 +5,9 @@ import bodyParser from "body-parser";
 import Mongoose from "mongoose"
 import User from "../server/Schema/User.js"
 import multer from "multer";
+import { spawn } from "child_process";
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 
 const upload = multer({ dest: "uploads/" });
@@ -28,6 +29,7 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.send("api calisiyor!");
@@ -65,6 +67,8 @@ app.post("/create-code", async (req, res) => {
                             "name": dosya için bir isim yarat uzantısını yazdığın koda göre ayarla,
                             "error": eğer hata verdiysen hatayı açıkla eğer hata yoksa error kısmını hiç verme
                         }
+
+                        code kısmında kod dışında hiçbirşey verme.
         `,
       },
       {
@@ -201,6 +205,31 @@ app.get("/:username/files", async (req, res) => {
     console.log(err);
     res.status(500).send("Bir hata oluştu");
   }
+});
+
+app.post('/execute', (req, res) => {
+  const code = req.body.code;
+
+  const process = spawn('python', ['-c', code]);
+
+  let result = '';
+  let error = '';
+
+  process.stdout.on('data', (data) => {
+    result += data.toString();
+  });
+
+  process.stderr.on('data', (data) => {
+    error += data.toString();
+  });
+
+  process.on('close', (code) => {
+    if (code !== 0) {
+      res.status(500).json({ error: error });
+    } else {
+      res.json({ result: result });
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3333
