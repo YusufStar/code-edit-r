@@ -10,7 +10,7 @@ const Files = () => {
     const user = JSON.parse(localStorage.getItem("user"))
 
     const getData = async () => {
-        await fetch(`http://localhost:3333/${user.username}/files`)
+        await fetch(`https://codeeditor-w8wq.onrender.com/${user.username}/files`)
             .then(response => response.json())
             .then(files => {
                 Setdata(files)
@@ -32,7 +32,7 @@ const Files = () => {
             code: `print("welcome to the my project")`,
             lang: "python"
         }
-        const response = await fetch(`http://localhost:3333/${user.username}/files`, {
+        const response = await fetch(`https://codeeditor-w8wq.onrender.com/${user.username}/files`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ const Files = () => {
 
     const delFile = async (e, file) => {
         e.stopPropagation()
-        const response = await fetch(`http://localhost:3333/${user.username}/files/${file.filename}`, {
+        const response = await fetch(`https://codeeditor-w8wq.onrender.com/${user.username}/files/${file.filename}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ const Files = () => {
             newname = newname + ".js"
         }
         if (newname) {
-            const response = await fetch(`http://localhost:3333/${user.username}/files/${file.filename}`, {
+            const response = await fetch(`https://codeeditor-w8wq.onrender.com/${user.username}/files/${file.filename}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

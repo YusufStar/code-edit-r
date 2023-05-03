@@ -19,7 +19,7 @@ const Editor = () => {
   const [consoleRes, setConsoleRes] = useState("")
 
   const getFile = async () => {
-    const response = await fetch(`http://localhost:3333/${username}/files/${id}`)
+    const response = await fetch(`https://codeeditor-w8wq.onrender.com/${username}/files/${id}`)
     const data = await response.json()
     setFile(data)
     setCode(data.code)
@@ -30,8 +30,40 @@ const Editor = () => {
     getFile()
   }, [])
 
+  const handleAutoComplate = async() => {
+    const response = await fetch(`https://codeeditor-w8wq.onrender.com/auto-complete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text: code })
+    })
+
+    const data = await response.json()
+
+    toast.promise(
+      Promise.resolve(response),
+      {
+        loading: "Auto Completing...",
+        success: "Successfully Auto Completed!",
+        error: "Failed to Auto Complete!"
+      },
+      {
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+          padding: '10px',
+          margin: '10px'
+        }
+      }
+    )
+
+    setCode(data.res)
+  }
+
   const ExecuteCode = async () => {
-    const response = await fetch(`http://localhost:3333/execute`, {
+    const response = await fetch(`https://codeeditor-w8wq.onrender.com/execute`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -66,7 +98,7 @@ const Editor = () => {
 
   const hamdleUpdateFile = async () => {
     console.log(consoleRes)
-    const response = await fetch(`http://localhost:3333/${username}/files/${filename}`, {
+    const response = await fetch(`https://codeeditor-w8wq.onrender.com/${username}/files/${filename}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -105,11 +137,59 @@ const Editor = () => {
       <div className='editor'>
         <div className='editor_header'>
           <div className='editor_header_left'>
-            <p>My Editor</p>
+            <p>{file?.lang?.charAt(0).toUpperCase() + file?.lang?.slice(1)} Editor</p>
           </div>
           <div className='editor_header_right'>
             <p>File: <span>{file?.filename}</span></p>
             <p>Language: {file?.lang}</p>
+            <div className="divider_column"
+              style={{
+                height: "25px",
+                width: "1px",
+                backgroundColor: "white",
+                margin: "0px 5px",
+              }}
+            ></div>
+            <p
+                onClick={handleAutoComplate}
+            style={{
+              olor: "white",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
+              <ion-icon name="flash-outline"></ion-icon>
+            </p>
+            <p onClick={() => {
+              const promise = navigator.clipboard.writeText(window.location.href)
+              toast.promise(
+                promise,
+                {
+                  loading: "Copying...",
+                  success: "Successfully Copied!",
+                  error: "Failed to Copy!"
+                },
+                {
+                  style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                    padding: '10px',
+                    margin: '10px'
+                  }
+                }
+              )
+            }
+            } style={{
+              olor: "white",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
+              <ion-icon name="share-outline"></ion-icon>
+            </p>
             <p onClick={hamdleUpdateFile} style={{
               olor: "white",
               cursor: "pointer",

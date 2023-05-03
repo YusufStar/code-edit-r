@@ -7,7 +7,7 @@ const Singin = () => {
     e.preventDefault()
     const username = e.target.username.value
     const password = e.target.password.value
-    const res = await fetch('http://localhost:3333/auth/signin', {
+    const res = await fetch('https://codeeditor-w8wq.onrender.com/auth/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -22,7 +22,7 @@ const AiGenerator = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:3333/create-code", {
+      const response = await fetch("https://codeeditor-w8wq.onrender.com/create-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -50,7 +50,7 @@ const AiGenerator = () => {
     if (!user) {
       navigate("/signup")
     } else {
-      const response = await fetch(`http://localhost:3333/${user?.username}/files`, {
+      const response = await fetch(`https://codeeditor-w8wq.onrender.com/${user?.username}/files`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

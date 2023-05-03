@@ -13,7 +13,7 @@ const Signup = () => {
       alert('Passwords do not match')
       return
     }
-    const response = await fetch('http://localhost:3333/auth/signup', {
+    const response = await fetch('https://codeeditor-w8wq.onrender.com/auth/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

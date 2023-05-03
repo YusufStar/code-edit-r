@@ -5,7 +5,36 @@ import cors from "cors";
 import { Configuration, OpenAIApi } from "openai";
 import bodyParser from "body-parser";
 import Mongoose from "mongoose"
-import User from "../server/Schema/User.js"
+const FilesSchema = new Mongoose.Schema({
+  filename: {
+    type: String,
+    required: true
+  },
+  code: {
+    type: String,
+    required: true
+  },
+  lang: {
+    type: String,
+    required: true
+  }
+});
+
+const UserSchema = new Mongoose.Schema({
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  password: {
+    type: String,
+    minlength: 6,
+    required: true,
+  },
+  files: [FilesSchema]
+});
+
+const User = Mongoose.model("user", UserSchema);
 import multer from "multer";
 import { spawn } from "child_process";
 import {NodeVM} from "vm2"
@@ -15,9 +44,8 @@ const configuration = new Configuration({
 
 const upload = multer({ dest: "uploads/" });
 
-const localDB = `mongodb+srv://yusuf:Lxu77xMZT3bn3KPg@cluster0.rokuwwc.mongodb.net/codeEditor`
 const connectDB = async () => {
-  await Mongoose.connect(localDB, {
+  await Mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -87,6 +115,19 @@ app.post("/create-code", async (req, res) => {
   res.send(completion.data.choices[0].message.content);
 });
 
+app.post("/auto-complete", async(req, res) => {
+  const {text} = req.body
+  const response = await openai.createEdit({
+    model: "text-davinci-edit-001",
+    input: text,
+    instruction: "python ile düşünerek kodu oluştur sadece kodu",
+    temperature: 0.7,
+    top_p: 1,
+  });
+
+  res.send({res: response.data.choices[0].text});
+})
+
 app.post("/auth/signup", async (req, res) => {
   const { username, password } = req.body
   if (password.length < 6) {
@@ -111,7 +152,7 @@ app.post("/auth/signup", async (req, res) => {
 
 app.post("/auth/signin", async (req, res, next) => {
   try {
-    const { email, username, password } = req.body
+    const { username, password } = req.body
     const user = await User.findOne({ username, password })
     if (!user) {
       res.status(401).json({

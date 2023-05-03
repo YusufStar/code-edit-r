@@ -41,5 +41,3 @@ yarn-error.log*
 /.changelog
 .npm/
 dist
-
-.vercel
