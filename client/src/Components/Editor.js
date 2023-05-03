@@ -3,6 +3,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import AceEditor from "react-ace";
 import "ace-builds/webpack-resolver";
 import "ace-builds/src-noconflict/mode-python";
+import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ext-language_tools";
 import Navbar from './Navbar'
@@ -11,12 +12,23 @@ import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs"
 import SyntaxHighlighter from "react-syntax-highlighter"
 
 const Editor = () => {
-  const location = useLocation()
-  const { file, isFile } = location.state
-  const { username, filename } = useParams()
-  const [code, setCode] = useState(file?.code)
+  const { username, id } = useParams()
+  const [file, setFile] = useState()
+  const [filename, setFilename] = useState("")
+  const [code, setCode] = useState("")
   const [consoleRes, setConsoleRes] = useState("")
-  const [editedfilename, seteditedfilename] = useState(filename)
+
+  const getFile = async () => {
+    const response = await fetch(`http://localhost:3333/${username}/files/${id}`)
+    const data = await response.json()
+    setFile(data)
+    setCode(data.code)
+    setFilename(data.filename)
+  }
+
+  useEffect(() => {
+    getFile()
+  }, [])
 
   const ExecuteCode = async () => {
     const response = await fetch(`http://localhost:3333/execute`, {
@@ -24,10 +36,13 @@ const Editor = () => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ code: code })
+      body: JSON.stringify({ code, lang: file.lang.toLowerCase() })
     })
 
     const data = await response.json()
+
+    console.log(data)
+
     setConsoleRes(data.result)
 
     toast.promise(
@@ -56,10 +71,14 @@ const Editor = () => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ code: code, filename: editedfilename })
+      body: JSON.stringify({ code: code, username: JSON.parse(localStorage.getItem("user"))?.username })
     })
 
     const data = response.json()
+
+    data.catch((error) => toast.error(error.message))
+
+    getFile()
 
     toast.promise(
       Promise.resolve(data),
@@ -89,24 +108,33 @@ const Editor = () => {
             <p>My Editor</p>
           </div>
           <div className='editor_header_right'>
-            <p>File: <span suppressContentEditableWarning={true} contentEditable onInput={(e) => seteditedfilename(e.currentTarget.textContent)}>{file.filename}</span></p>
-            <p>Language: {file.lang}</p>
+            <p>File: <span>{file?.filename}</span></p>
+            <p>Language: {file?.lang}</p>
             <p onClick={hamdleUpdateFile} style={{
-              color: "white",
-              cursor: "pointer"
-            }}>save</p>
+              olor: "white",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
+              <ion-icon name="save-outline"></ion-icon>
+            </p>
             <p style={{
               color: "white",
-              cursor: "pointer"
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}
               onClick={() => ExecuteCode()}
-            >Run Python File</p>
+            ><ion-icon name="play-outline"></ion-icon>
+            </p>
           </div>
         </div>
         <div className='editor_body'>
           <AceEditor
             placeholder="Placeholder Text"
-            mode="python"
+            mode={file?.lang.toLowerCase()}
             theme="monokai"
             name="blah2"
             onChange={(e) => setCode(e)}

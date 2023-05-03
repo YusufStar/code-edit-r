@@ -9,6 +9,7 @@ const AiGenerator = () => {
   const [text, setText] = useState("")
   const [data, setData] = useState()
   const [copy, setCopy] = useState(false)
+  const [lang, setLang] = useState("python")
   const [file, setFile] = useState({
     filename: data?.name,
     code: data?.code,
@@ -26,7 +27,7 @@ const AiGenerator = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ text: text })
+        body: JSON.stringify({ text: text, lang: lang })
       });
       const data = await response.json();
       setFile({
@@ -83,9 +84,19 @@ const AiGenerator = () => {
     <div className='ai_body'>
       <Navbar />
       <div className='ai_content'>
-        <h1 className='ai_title'><span>AI Generator</span></h1>
+        <h1 className='ai_title'>Text To Code</h1>
         <div className="ai_input_body">
+          <div className="ai_input_inputs">
+          <select
+            className='ai_select_lang'
+            value={lang}
+            onChange={(e) => setLang(e.target.value)}
+          >
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+          </select>
           <input className='ai_input_message' type="text" value={text} onChange={(e) => setText(e.target.value)} />
+          </div>
           <svg onClick={() => handleSubmit()} className='send_svg' fill="##ffff" width="800px" height="800px" viewBox="0 0 24 24" id="send" xmlns="http://www.w3.org/2000/svg"><line id="secondary" x1="7" y1="12" x2="11" y2="12" ></line><path id="primary" d="M5.44,4.15l14.65,7a1,1,0,0,1,0,1.8l-14.65,7A1,1,0,0,1,4.1,18.54l2.72-6.13a1.06,1.06,0,0,0,0-.82L4.1,5.46A1,1,0,0,1,5.44,4.15Z"></path></svg>
         </div>
         <div className="ai_res_detail">

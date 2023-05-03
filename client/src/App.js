@@ -20,7 +20,7 @@ function App() {
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route path='/ai' element={<AiGenerator />} />
-          <Route path='/:username/editor/:filename' element={<Editor />} />
+          <Route path='/:username/editor/:id' element={<Editor />} />
           <Route path='/auth/signin' element={<Signin />} />
           <Route path='/auth/signup' element={<Signup />} />
           <Route path='/files' element={<Files />} />
