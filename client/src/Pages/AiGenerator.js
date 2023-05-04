@@ -33,7 +33,16 @@ const AiGenerator = () => {
       const hamData = await response.json();
       const data = JSON.parse(hamData)
       if(data.success) {
-        toast.success(data.success)
+        toast.success(
+          "Successfully Generated Code!",
+          {
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            }
+          }
+        )
       } else {
         toast.error(data.error)
       }
@@ -55,7 +64,7 @@ const AiGenerator = () => {
 
   const handleNewFile = async () => {
     if (!user) {
-      navigate("/signup")
+      navigate("/auth/signin")
     } else {
       const response = await fetch(`https://codeeditor-w8wq.onrender.com/${user?.username}/files`, {
         method: "POST",

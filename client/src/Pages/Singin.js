@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import {useNavigate} from "react-router-dom"
+import Navbar from '../Components/Navbar'
+import {toast} from "react-hot-toast"
 
 const Singin = () => {
   const navigate = useNavigate()
@@ -7,19 +9,33 @@ const Singin = () => {
   const [password, setPassword] = useState("")
   const handleLogin = async (e) => {
     e.preventDefault()
-    const res = await fetch('https://codeeditor-w8wq.onrender.com/auth/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({username, password})
-    })
-    const data = await res.json()
-      localStorage.setItem('user', JSON.stringify(data.user))
-      navigate('/')
+    try {
+      const response = await fetch('https://codeeditor-w8wq.onrender.com/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        // Display success message
+        toast.success(data.message);
+        navigate("/")
+      } else {
+        // Display error message
+        toast.error(data.error);
+      }
+    } catch (error) {
+      // Display error message
+      toast.error('An error occurred');
+    }
   }
+
   return (
     <div className='auth_body'>
+      <Navbar/>
       <div className='auth_form'>
         <div className='auth_form_body'>
         <div className='auth_form_header'>

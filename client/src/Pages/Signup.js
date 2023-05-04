@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from "react-router-dom"
+import Navbar from '../Components/Navbar'
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -25,6 +26,7 @@ const Signup = () => {
   }
   return (
     <div className='auth_body'>
+      <Navbar />
       <div className='auth_form'>
         <div className='auth_form_body'>
           <div className='auth_form_header'>

@@ -19,7 +19,11 @@ const Files = () => {
     }
 
     useEffect(() => {
+        if (!user) {
+            navigate("/auth/signin")
+        } else {
         getData()
+    }
     }, [])
 
     const clickFile = (file) => {

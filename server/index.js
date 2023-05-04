@@ -147,7 +147,7 @@ app.post("/auth/signup", async (req, res) => {
   }
 })
 
-app.post("/auth/signin", async (req, res, next) => {
+app.post("/auth/signin", async (req, res) => {
   try {
     const { username, password } = req.body
     const user = await User.findOne({ username, password })
