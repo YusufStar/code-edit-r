@@ -30,7 +30,13 @@ const AiGenerator = () => {
         },
         body: JSON.stringify({ text: text, lang: lang })
       });
-      const data = await response.json();
+      const hamData = await response.json();
+      const data = JSON.parse(hamData)
+      if(data.success) {
+        toast.success(data.success)
+      } else {
+        toast.error(data.error)
+      }
       setFile({
         filename: data?.name,
         code: data?.code,

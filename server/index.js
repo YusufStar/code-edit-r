@@ -75,8 +75,7 @@ app.post("/create-code", async (req, res) => {
     messages: [
       {
         role: "system",
-        content: ` sana verilen texti şu şekilde kullanacaksın: "text + bu programı python ile yaz"
-        sen bir kod üretme aracısın sana anlatılan kod'u yazacaksın.
+        content: `sen bir kod üretme aracısın sana anlatılan kod'u yazacaksın.
         
                         ${lang} ile cevap yazacaksın!
                         kod dışında ekstra mesah olarak hiçbirşey ekleme ne olursa olsun!!!
@@ -110,7 +109,7 @@ app.post("/create-code", async (req, res) => {
     ],
   });
 
-  res.send(completion.data.choices[0].message.content);
+  res.send(JSON.stringify(completion.data.choices[0].message.content));
 });
 
 app.post("/auto-complete", async(req, res) => {
