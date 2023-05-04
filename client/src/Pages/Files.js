@@ -128,18 +128,20 @@ const Files = () => {
         }
     }
 
-    const handleSubmitSearch = async (e) => {
-        e.preventDefault()
-        if(searchTerm == "") {
+    const handleSearch = async (e) => {
+        setSearchTerm(e.target.value)
+        if(
+            e.target.value == "" ||
+            e.target.value == null ||
+            e.target.value == undefined
+        ) {
             getData()
             return
         }
-        {/* Map in data method */ }
-        const filteredData = data.filter((file) => {
+        const filteredFiles = data.filter((file) => {
             return file.filename.toLowerCase().includes(searchTerm.toLowerCase())
-        }
-        )
-        Setdata(filteredData)
+        })
+        Setdata(filteredFiles)
     }
 
     return (
@@ -152,13 +154,12 @@ const Files = () => {
                 <div className="files_body_header">
                     <h1>Files</h1>
                     {/* File Search Section */}
-                    <form onSubmit={handleSubmitSearch} className="file_search">
+                    <div className="file_search">
                         <input
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={handleSearch}
                             type="text" placeholder="Search Files" />
-                        <button type='submit'><ion-icon name="search-outline"></ion-icon></button>
-                    </form>
+                    </div>
                     <div className="new_file_container">
                         <h2>{data?.length} files</h2>
                         <ion-icon title="Add New File" onClick={() => newFile()} name="add-outline"></ion-icon>

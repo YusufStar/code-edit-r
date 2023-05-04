@@ -55,8 +55,8 @@ html,
 #root,
 body {
     scroll-behavior: smooth;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
 }
 
 .home_body {
@@ -373,8 +373,8 @@ canvas {
 }
 
 .ai_body {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -454,13 +454,10 @@ canvas {
 
 
 .send_svg {
-    position: absolute;
-    right: 16px;
     cursor: pointer;
     width: 32px;
     height: 32px;
     fill: #FFFFFF;
-    z-index: 3;
 }
 
 .ai_result_body {
@@ -504,6 +501,33 @@ canvas {
     overflow: hidden;
     transition: 0.5s;
     padding: 8px;
+}
+
+.copy_button span{
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.copy_button:hover {
+    background-color: #2E77B8;
+}
+
+.copy_button::before {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 100%;
+    background-color: #dfdfdf;
+    opacity: 0.3;
+    transform: rotate(45deg);
+    left: -110%;
+    top: 0;
+    transition: 0.5s;
+}
+
+.copy_button:hover::before {
+    left: 110%;
 }
 
 ion-icon {
@@ -652,9 +676,7 @@ ion-icon {
 .auth_form_body_input input {
     width: 100%;
     height: 100%;
-    background-color: #1c1c1c;
     border-radius: 5px;
-    border: 1px solid #1c1c1c;
     padding: 0 15px;
     font-size: 16px;
     font-weight: 600;
@@ -677,8 +699,13 @@ ion-icon {
     cursor: pointer;
 }
 
+.auth_form_body_button:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
 .auth_form_body_button:hover {
-    background-color: #2f2f2f;
+    background-color: #3f3f3f;
     border: 1px solid #2f2f2f;
 }
 
@@ -976,4 +1003,30 @@ ion-icon {
     border: 2px solid #dfdfdf;
     border-radius: 15px;
     outline: none;
+}
+
+.auth_form_body_text {
+    font-size: 16px;
+    font-weight: 400;
+    color: #dfdfdf;
+    padding-top: 24px;
+    margin: 0;
+}
+
+.auth_form_body_text a {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4BAF4F;
+    text-decoration: none;
+}
+
+.ai_input_button {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    right: 16px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

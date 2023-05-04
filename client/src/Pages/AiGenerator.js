@@ -19,7 +19,8 @@ const AiGenerator = () => {
   const user = JSON.parse(localStorage.getItem("user"))
   const navigate = useNavigate()
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     try {
       setLoading(true)
       const response = await fetch("https://codeeditor-w8wq.onrender.com/create-code", {
@@ -85,9 +86,10 @@ const AiGenerator = () => {
       <Navbar />
       <div className='ai_content'>
         <h1 className='ai_title'>Text To Code</h1>
-        <div className="ai_input_body">
+        <form onSubmit={handleSubmit} className="ai_input_body">
           <div className="ai_input_inputs">
           <select
+          required
             className='ai_select_lang'
             value={lang}
             onChange={(e) => setLang(e.target.value)}
@@ -95,13 +97,20 @@ const AiGenerator = () => {
             <option value="javascript">JavaScript</option>
             <option value="python">Python</option>
           </select>
-          <input className='ai_input_message' type="text" value={text} onChange={(e) => setText(e.target.value)} />
+          <input required className='ai_input_message' type="text" value={text} onChange={(e) => setText(e.target.value)} />
           </div>
-          <svg onClick={() => handleSubmit()} className='send_svg' fill="##ffff" width="800px" height="800px" viewBox="0 0 24 24" id="send" xmlns="http://www.w3.org/2000/svg"><line id="secondary" x1="7" y1="12" x2="11" y2="12" ></line><path id="primary" d="M5.44,4.15l14.65,7a1,1,0,0,1,0,1.8l-14.65,7A1,1,0,0,1,4.1,18.54l2.72-6.13a1.06,1.06,0,0,0,0-.82L4.1,5.46A1,1,0,0,1,5.44,4.15Z"></path></svg>
-        </div>
+          <button type='submit'
+            className='ai_input_button' 
+          >
+          <svg className='send_svg' fill="##ffff" width="800px" height="800px" viewBox="0 0 24 24" id="send" xmlns="http://www.w3.org/2000/svg"><line id="secondary" x1="7" y1="12" x2="11" y2="12" ></line><path id="primary" d="M5.44,4.15l14.65,7a1,1,0,0,1,0,1.8l-14.65,7A1,1,0,0,1,4.1,18.54l2.72-6.13a1.06,1.06,0,0,0,0-.82L4.1,5.46A1,1,0,0,1,5.44,4.15Z"></path></svg>
+
+          </button>
+        </form>
         <div className="ai_res_detail">
           <p className='ai_res_detail_header'>AI Result</p>
-          <button className='copy_button' style={{
+          <button className='copy_button'
+          disabled={!copy}
+          style={{
             opacity: copy ? 1 : 0.5,
             cursor: copy ? "pointer" : "not-allowed",
           }}

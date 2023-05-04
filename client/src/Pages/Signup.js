@@ -1,16 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 const Signup = () => {
   const navigate = useNavigate()
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const handleRegister = async (e) => {
     e.preventDefault()
-    const username = e.target.username.value
-    const password = e.target.password.value
-    const confirmPassword = e.target.confirmPassword.value
     if (password !== confirmPassword) {
-      alert('Passwords do not match')
+      toast.error('Passwords do not match')
       return
     }
     const response = await fetch('https://codeeditor-w8wq.onrender.com/auth/signup', {
@@ -27,27 +27,54 @@ const Signup = () => {
     <div className='auth_body'>
       <div className='auth_form'>
         <div className='auth_form_body'>
-        <div className='auth_form_header'>
-          <h1>Sign Up</h1>
-        </div>
+          <div className='auth_form_header'>
+            <h1>Sign Up</h1>
+          </div>
           <form onSubmit={handleRegister}>
-            <div className='auth_form_body_input'>
+            <div
+              className='auth_form_body_input'>
               <label htmlFor='username'>Username</label>
-              <input type='text' name='username' id='username' />
+              {/* if user name border color style red and green */}
+              <input
+                style={{
+                  backgroundColor: "#1c1c1c"
+                }}
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                type='text' name='username' id='username' />
             </div>
             <div className='auth_form_body_input'>
               <label htmlFor='password'>Password</label>
-              <input type='password' name='password' id='password' />
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{
+                  backgroundColor: "#1c1c1c"
+                }}
+                required type='password' name='password' id='password' />
             </div>
 
             <div className='auth_form_body_input'>
               <label htmlFor='confirmPassword'>Confirm Password</label>
-              <input type='password' name='confirmPassword' id='confirmPassword' />
+              <input
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                style={{
+                  backgroundColor: "#1c1c1c"
+                }}
+                required type='password' name='confirmPassword' id='confirmPassword' />
             </div>
 
-            <button type='submit'
+            <button
+            disabled={!username || !password || !confirmPassword || password !== confirmPassword}
+              type='submit'
               className='auth_form_body_button'
             >Sign Up</button>
+
+            <p className='auth_form_body_text'>
+              Already have an account? <a href='/auth/signin'>Sign In</a>
+            </p>
           </form>
         </div>
       </div>

@@ -75,12 +75,10 @@ app.post("/create-code", async (req, res) => {
     messages: [
       {
         role: "system",
-        content: `
-        sana verilen texti şu şekilde kullanacaksın: "text + bu programı python ile yaz"
+        content: ` sana verilen texti şu şekilde kullanacaksın: "text + bu programı python ile yaz"
         sen bir kod üretme aracısın sana anlatılan kod'u yazacaksın.
         
                         ${lang} ile cevap yazacaksın!
-
                         kod dışında ekstra mesah olarak hiçbirşey ekleme ne olursa olsun!!!
                         
                         çıktın şu şekilde olacak
@@ -101,9 +99,9 @@ app.post("/create-code", async (req, res) => {
                             "name": dosya için bir isim yarat uzantısını yazdığın koda göre ayarla,
                             "error": eğer hata verdiysen hatayı açıkla eğer hata yoksa error kısmını hiç verme
                         }
-
                         code kısmında kod dışında hiçbirşey verme.
-        `,
+                        code ksımına ${lang} dilindeki istediğim programın kodu dışında kendin hiçbirşey ekleme!!.
+                        `,
       },
       {
         role: "user",
@@ -120,7 +118,7 @@ app.post("/auto-complete", async(req, res) => {
   const response = await openai.createEdit({
     model: "text-davinci-edit-001",
     input: text,
-    instruction: "python ile düşünerek kodu oluştur sadece kodu",
+    instruction: "yazılan dili anla ve yazılan kod üzerinden kullanıcının yazmak istediği kodu açıklama satırlarıyla anlatarak detaylı ve optimize şekilde yaz veya tamamla. yazdığın kod bir parametre alıyorsa her zaman bir fonksiyon yazmalısın çünkü input çalışmayacaktır benim yazdığım editörde o yüzden ne olursa olsun input kullanma eğer fonskiyon yazmak istemezsen input yerine örnek bir veri ver direkt.",
     temperature: 0.7,
     top_p: 1,
   });
