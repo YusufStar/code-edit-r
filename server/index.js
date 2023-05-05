@@ -17,6 +17,11 @@ const FilesSchema = new Mongoose.Schema({
   lang: {
     type: String,
     required: true
+  },
+  Ispublic: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 });
 
@@ -41,8 +46,6 @@ import {NodeVM} from "vm2"
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const upload = multer({ dest: "uploads/" });
 
 const connectDB = async () => {
   await Mongoose.connect(process.env.MONGO_URL, {
@@ -170,13 +173,25 @@ app.post("/auth/signin", async (req, res) => {
   }
 })
 
+app.get("/files", async (req, res) => {
+  try {
+    const users = await User.find({ "files.Ispublic": true });
+    const files = users.flatMap(user => user.files.filter(file => file.Ispublic));
+    res.send({data: files});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Bir hata oluştu");
+  }
+});
+
+
 app.post("/:username/files", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username });
     if (!user) return res.status(404).send("Kullanıcı bulunamadı");
 
     const { filename, code, lang } = req.body;
-    user.files.push({ filename, code, lang });
+    user.files.push({ filename, code, lang, Ispublic: false});
     await user.save();
     res.send(user.files);
   } catch (err) {
@@ -201,23 +216,6 @@ app.get("/:username/files/:id", async (req, res) => {
   }
 });
 
-// Kullanıcının dosya yüklemesi için
-app.post("/:username/upload", upload.single("file"), async (req, res) => {
-  try {
-    const user = await User.findOne({ username: req.params.username });
-    if (!user) return res.status(404).send("Kullanıcı bulunamadı");
-
-    const { originalname: filename, buffer: code } = req.file;
-    const lang = req.body.lang || "text";
-    user.files.push({ filename, code, lang });
-    await user.save();
-    res.send(user.files);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Bir hata oluştu");
-  }
-});
-
 // Kullanıcının belirli bir dosyasını güncellemesi için
 app.put("/:username/files/:filename", async (req, res) => {
   try {
@@ -231,16 +229,17 @@ app.put("/:username/files/:filename", async (req, res) => {
     const file = user.files.find((f) => f.filename === req.params.filename);
     if (!file) return res.status(404).send("Dosya bulunamadı");
 
-    const { filename, code, lang } = req.body;
+    const { filename, code, lang, Ispublic } = req.body;
     if (code) file.code = code;
     if (lang) file.lang = lang;
     if (filename) file.filename = filename;
+    if (Ispublic) file.Ispublic = Ispublic
 
     await user.save();
     res.send(user.files);
   } catch (err) {
     console.log(err);
-    res.status(500).send("Bir hata oluştu");
+    res.status(500).send({message: "Bir hata oluştu"});
   }
 });
 

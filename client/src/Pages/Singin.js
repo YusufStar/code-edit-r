@@ -22,6 +22,7 @@ const Singin = () => {
       if (response.ok) {
         // Display success message
         toast.success(data.message);
+        localStorage.setItem("user", JSON.stringify(data.user))
         navigate("/")
       } else {
         // Display error message

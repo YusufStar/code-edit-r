@@ -10,20 +10,35 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const handleRegister = async (e) => {
     e.preventDefault()
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match')
-      return
+    if (password.length < 6) {
+      // Display error message
+      return toast.error('Password less than 6 characters');
     }
-    const response = await fetch('https://codeeditor-w8wq.onrender.com/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password })
-    })
-    toast.success("Account created successfully! You can now login.",)
-    navigate("/auth/signin")
+
+    try {
+      const response = await fetch('https://codeeditor-w8wq.onrender.com/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        // Display success message
+        toast.success(data.message);
+        navigate("/auth/signin")
+      } else {
+        // Display error message
+        toast.error(data.message);
+      }
+    } catch (error) {
+      // Display error message
+      toast.error('An error occurred');
+    }
   }
+
   return (
     <div className='auth_body'>
       <Navbar />

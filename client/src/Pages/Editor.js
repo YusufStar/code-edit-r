@@ -6,7 +6,7 @@ import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ext-language_tools";
-import Navbar from './Navbar'
+import Navbar from '../Components/Navbar'
 import { toast } from 'react-hot-toast';
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs"
 import SyntaxHighlighter from "react-syntax-highlighter"
@@ -17,20 +17,33 @@ const Editor = () => {
   const [filename, setFilename] = useState("")
   const [code, setCode] = useState("")
   const [consoleRes, setConsoleRes] = useState("")
+  const user = JSON.parse(localStorage.getItem("user"))
+  const [isPublic, setIsPublic] = useState(false)
+  const [loading, setloading] = useState(false)
 
   const getFile = async () => {
     const response = await fetch(`https://codeeditor-w8wq.onrender.com/${username}/files/${id}`)
     const data = await response.json()
+    console.log(data)
     setFile(data)
     setCode(data.code)
     setFilename(data.filename)
+    setIsPublic(data.Ispublic)
   }
 
   useEffect(() => {
-    getFile()
+    if (user) {
+      getFile()
+    } else {
+      window.location.href = "/auth/signin"
+    }
   }, [])
 
-  const handleAutoComplate = async() => {
+  const handleSwitchChange = () => {
+    setIsPublic(!isPublic)
+  };
+
+  const handleAutoComplate = async () => {
     const response = await fetch(`https://codeeditor-w8wq.onrender.com/auto-complete`, {
       method: "POST",
       headers: {
@@ -73,8 +86,6 @@ const Editor = () => {
 
     const data = await response.json()
 
-    console.log(data)
-
     setConsoleRes(data.result)
 
     toast.promise(
@@ -97,20 +108,16 @@ const Editor = () => {
   }
 
   const hamdleUpdateFile = async () => {
-    console.log(consoleRes)
-    const response = await fetch(`https://codeeditor-w8wq.onrender.com/${username}/files/${filename}`, {
+    const url = "https://codeeditor-w8wq.onrender.com"
+    const response = await fetch(`${url}/${username}/files/${filename}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ code: code, username: JSON.parse(localStorage.getItem("user"))?.username })
+      body: JSON.stringify({ code: code, username: JSON.parse(localStorage.getItem("user"))?.username, Ispublic: isPublic })
     })
 
     const data = response.json()
-
-    data.catch((error) => toast.error(error.message))
-
-    getFile()
 
     toast.promise(
       Promise.resolve(data),
@@ -128,7 +135,9 @@ const Editor = () => {
           margin: '10px'
         }
       }
-    )
+    ).then(() => {
+      getFile()
+    })
   }
 
   return (
@@ -150,15 +159,22 @@ const Editor = () => {
                 margin: "0px 5px",
               }}
             ></div>
+            <div className="switch_container">
+              <p>{isPublic ? "Public" : "Private"}</p>
+              <label className="switch">
+                <input type="checkbox" checked={isPublic} onChange={handleSwitchChange} />
+                <span className="slider round"></span>
+              </label>
+            </div>
             <p
-                onClick={handleAutoComplate}
-            style={{
-              olor: "white",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}>
+              onClick={handleAutoComplate}
+              style={{
+                olor: "white",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
               <ion-icon name="flash-outline"></ion-icon>
             </p>
             <p onClick={() => {

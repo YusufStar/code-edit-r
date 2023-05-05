@@ -36,7 +36,8 @@ const Files = () => {
             code: `print("welcome to the my project")`,
             lang: "python"
         }
-        const response = await fetch(`https://codeeditor-w8wq.onrender.com/${user.username}/files`, {
+        const url = "https://codeeditor-w8wq.onrender.com"
+        const response = await fetch(`${url}/${user.username}/files`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

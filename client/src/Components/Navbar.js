@@ -22,6 +22,9 @@ const Navbar = () => {
                 <div className='navbar_left_links'>
                     <p onClick={() => navigate("/files")}>Files</p>
                 </div>
+                <div className='navbar_left_links'>
+                    <p onClick={() => navigate("/community")}>Community</p>
+                </div>
             </div>
 
             <div className='navbar_right'>
