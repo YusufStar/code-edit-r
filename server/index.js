@@ -1,10 +1,14 @@
 import express from "express";
 import { config } from "dotenv";
-config();
+import { spawn } from "child_process";
+import { NodeVM } from "vm2"
 import cors from "cors";
 import { Configuration, OpenAIApi } from "openai";
 import bodyParser from "body-parser";
 import Mongoose from "mongoose"
+config();
+
+
 const FilesSchema = new Mongoose.Schema({
   filename: {
     type: String,
@@ -22,7 +26,45 @@ const FilesSchema = new Mongoose.Schema({
     type: Boolean,
     required: true,
     default: false
+  },
+  date: {
+    type: Date,
+    default: Date.now
   }
+});
+
+const ForumSchema = new Mongoose.Schema({
+  description: {
+    type: String,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  fileid: {
+    type: Mongoose.Schema.Types.ObjectId,
+    ref: 'File',
+    required: true,
+  },
+  comments: [{
+    username: {
+      type: String,
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
 });
 
 const UserSchema = new Mongoose.Schema({
@@ -40,9 +82,8 @@ const UserSchema = new Mongoose.Schema({
 });
 
 const User = Mongoose.model("user", UserSchema);
-import multer from "multer";
-import { spawn } from "child_process";
-import {NodeVM} from "vm2"
+const Forum = Mongoose.model("forum", ForumSchema);
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -115,8 +156,8 @@ app.post("/create-code", async (req, res) => {
   res.send(JSON.stringify(completion.data.choices[0].message.content));
 });
 
-app.post("/auto-complete", async(req, res) => {
-  const {text} = req.body
+app.post("/auto-complete", async (req, res) => {
+  const { text } = req.body
   const response = await openai.createEdit({
     model: "text-davinci-edit-001",
     input: text,
@@ -125,7 +166,7 @@ app.post("/auto-complete", async(req, res) => {
     top_p: 1,
   });
 
-  res.send({res: response.data.choices[0].text});
+  res.send({ res: response.data.choices[0].text });
 })
 
 app.post("/auth/signup", async (req, res) => {
@@ -177,12 +218,25 @@ app.get("/files", async (req, res) => {
   try {
     const users = await User.find({ "files.Ispublic": true });
     const files = users.flatMap(user => user.files.filter(file => file.Ispublic));
-    res.send({data: files});
+    res.send({ data: files });
   } catch (err) {
     console.log(err);
     res.status(500).send("Bir hata oluştu");
   }
 });
+
+/* Get Files By User Name */
+app.get("/files/:username", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).send("Kullanıcı bulunamadı");
+
+    res.send(user.files);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Bir hata oluştu");
+  }
+})
 
 
 app.post("/:username/files", async (req, res) => {
@@ -191,7 +245,7 @@ app.post("/:username/files", async (req, res) => {
     if (!user) return res.status(404).send("Kullanıcı bulunamadı");
 
     const { filename, code, lang } = req.body;
-    user.files.push({ filename, code, lang, Ispublic: false});
+    user.files.push({ filename, code, lang, Ispublic: false });
     await user.save();
     res.send(user.files);
   } catch (err) {
@@ -239,7 +293,7 @@ app.put("/:username/files/:filename", async (req, res) => {
     res.send(user.files);
   } catch (err) {
     console.log(err);
-    res.status(500).send({message: "Bir hata oluştu"});
+    res.status(500).send({ message: "Bir hata oluştu" });
   }
 });
 
@@ -308,11 +362,11 @@ app.post('/execute', (req, res) => {
           },
         },
       };
-  
-      const vm = new NodeVM({sandbox: context});
+
+      const vm = new NodeVM({ sandbox: context });
       vm.run(code);
-  
-      res.send({result: result});
+
+      res.send({ result: result });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -320,6 +374,61 @@ app.post('/execute', (req, res) => {
     res.status(400).json({ error: 'Unsupported language' });
   }
 });
+
+app.post("/:username/forums/:fileid", async (req, res) => {
+  try {
+    const { description, title, lang } = req.body;
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).send("Kullanıcı bulunamadı");
+
+    const file = user.files.id(req.params.fileid);
+    if (!file) return res.status(404).send("Dosya bulunamadı");
+
+    const forum = new Forum({ lang, description, title, username: user.username, fileid: file._id });
+    await forum.save();
+    res.send({success: true});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({success: true, message: "Bir hata oluştu" });
+  }
+});
+app.put("/forums/:forumId", async (req, res) => {
+  try {
+    const { description, title } = req.body;
+    const forum = await Forum.findById(req.params.forumId);
+    if (!forum) return res.status(404).send("Forum bulunamadı");
+    forum.description = description;
+    forum.title = title;
+    await forum.save();
+    res.send(forum);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Bir hata oluştu");
+  }
+});
+
+app.delete("/forums/:forumId", async (req, res) => {
+  try {
+    const forum = await Forum.findById(req.params.forumId);
+    if (!forum) return res.status(404).send("Forum bulunamadı");
+    await forum.remove();
+    res.send(forum);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Bir hata oluştu");
+  }
+});
+
+app.get("/forums", async (req, res) => {
+  try {
+    const forums = await Forum.find();
+    res.send(forums);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Bir hata oluştu");
+  }
+});
+
 
 const PORT = process.env.PORT || 3333
 

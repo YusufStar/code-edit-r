@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Navbar from '../Components/Navbar'
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs"
 import SyntaxHighlighter from "react-syntax-highlighter"
@@ -10,6 +10,8 @@ const AiGenerator = () => {
   const [data, setData] = useState()
   const [copy, setCopy] = useState(false)
   const [lang, setLang] = useState("python")
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const optionsWrapperRef = useRef(null);
   const [file, setFile] = useState({
     filename: data?.name,
     code: data?.code,
@@ -19,11 +21,44 @@ const AiGenerator = () => {
   const user = JSON.parse(localStorage.getItem("user"))
   const navigate = useNavigate()
 
+  const options = [
+    { value: "python", label: "Python" },
+    { value: "javascript", label: "Javascript" },
+  ];
+
+  const handleSelectClick = () => {
+    setOptionsOpen(!optionsOpen);
+  };
+
+  const handleOptionClick = (optionValue) => {
+    setLang(optionValue);
+    setOptionsOpen(false);
+  };
+
+  const selectedOption = options.find(
+    (option) => option.value === lang
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        optionsWrapperRef.current &&
+        !optionsWrapperRef.current.contains(event.target)
+      ) {
+        setOptionsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       setLoading(true)
-      const response = await fetch("https://codeeditor-w8wq.onrender.com/create-code", {
+      const response = await fetch(`https://codeeditor-w8wq.onrender.com/create-code`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -32,7 +67,7 @@ const AiGenerator = () => {
       });
       const hamData = await response.json();
       const data = JSON.parse(hamData)
-      if(data.success) {
+      if (data.success) {
         toast.success(
           "Successfully Generated Code!",
           {
@@ -100,35 +135,72 @@ const AiGenerator = () => {
     <div className='ai_body'>
       <Navbar />
       <div className='ai_content'>
-        <h1 className='ai_title'>Text To Code</h1>
         <form onSubmit={handleSubmit} className="ai_input_body">
           <div className="ai_input_inputs">
-          <select
-          required
-            className='ai_select_lang'
-            value={lang}
-            onChange={(e) => setLang(e.target.value)}
-          >
-            <option value="javascript">JavaScript</option>
-            <option value="python">Python</option>
-          </select>
-          <input required className='ai_input_message' type="text" value={text} onChange={(e) => setText(e.target.value)} />
+            <div className="select-wrapper" ref={optionsWrapperRef}>
+              <div
+                className="select-inner-wrapper"
+                onClick={handleSelectClick}
+                data-testid="select-inner-wrapper"
+              >
+                <div className="selected-value">{selectedOption.label}</div>
+                <ion-icon name="chevron-down-outline"></ion-icon>
+              </div>
+              {optionsOpen && (
+                <div className="options-wrapper">
+                  {options.map((option) => (
+                    <div
+                      key={option.value}
+                      className={`option ${option.value === lang ? "active" : ""
+                        }`}
+                      onClick={() => handleOptionClick(option.value)}
+                      data-testid={`option-${option.value}`}
+                    >
+                      {option.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <input
+              required
+              className='ai_input_message'
+              type="text"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Text To Code..."
+            />
           </div>
-          <button type='submit'
-            className='ai_input_button' 
-          >
-          <svg className='send_svg' fill="##ffff" width="800px" height="800px" viewBox="0 0 24 24" id="send" xmlns="http://www.w3.org/2000/svg"><line id="secondary" x1="7" y1="12" x2="11" y2="12" ></line><path id="primary" d="M5.44,4.15l14.65,7a1,1,0,0,1,0,1.8l-14.65,7A1,1,0,0,1,4.1,18.54l2.72-6.13a1.06,1.06,0,0,0,0-.82L4.1,5.46A1,1,0,0,1,5.44,4.15Z"></path></svg>
-
+          <button type='submit' className='ai_input_button'>
+            <svg className='send_svg' fill="##ffff" width="800px" height="800px" viewBox="0 0 24 24" id="send" xmlns="http://www.w3.org/2000/svg">
+              <line id="secondary" x1="7" y1="12" x2="11" y2="12"></line>
+              <path id="primary" d="M5.44,4.15l14.65,7a1,1,0,0,1,0,1.8l-14.65,7A1,1,0,0,1,4.1,18.54l2.72-6.13a1.06,1.06,0,0,0,0-.82L4.1,5.46A1,1,0,0,1,5.44,4.15Z"></path>
+            </svg>
           </button>
         </form>
+
         <div className="ai_res_detail">
-          <p className='ai_res_detail_header'>AI Result</p>
-          <button className='copy_button'
-          disabled={!copy}
-          style={{
-            opacity: copy ? 1 : 0.5,
-            cursor: copy ? "pointer" : "not-allowed",
-          }}
+          <p className='ai_res_detail_header'>
+            {data?.name || "No data found"}
+          </p>
+          <div className='ai_code_action_buttons'>
+          <button className='aciton_button'
+            disabled={!data}
+            style={{
+              opacity: data ? 1 : 0.5,
+              cursor: data ? "pointer" : "not-allowed",
+            }}
+            onClick={() => handleNewFile()}
+          >
+            <ion-icon name="save-outline" className="copy_icon" size="midium" />
+            <span>Save Code</span>
+          </button>
+          <button className='aciton_button'
+            disabled={!copy}
+            style={{
+              opacity: copy ? 1 : 0.5,
+              cursor: copy ? "pointer" : "not-allowed",
+            }}
             onClick={() => {
               if (data?.code) {
                 navigator.clipboard.writeText(data.code)
@@ -145,6 +217,7 @@ const AiGenerator = () => {
             <ion-icon name="clipboard-outline" className="copy_icon" size="midium" />
             <span>Copy Code</span>
           </button>
+          </div>
         </div>
         {loading ? (
           <div className='loading_container'>
@@ -156,22 +229,27 @@ const AiGenerator = () => {
             </p>
           </div>
         ) : (
-          <div className='ai_res_div' style={{
-            position: "relative"
-          }}>
-            {data?.code &&
-              <ion-icon onClick={() => handleNewFile()} name="save-outline"></ion-icon>}
-            <SyntaxHighlighter language='python' style={atomOneDark} customStyle={{
-              width: "750px",
-              height: "500px",
-              padding: "25px",
-              borderBottomLeftRadius: "15px",
-              borderBottomRightRadius: "15px",
-            }}
-              wrapLongLines={true}>
+          <div className='ai_res_div' style={{ position: 'relative' }}>
+            <SyntaxHighlighter
+              language='python'
+              style={atomOneDark}
+              customStyle={{
+                width: '750px',
+                height: '500px',
+                padding: '25px',
+                backgroundColor: '#333333',
+                fontSize: '14px',
+                lineHeight: '1.5',
+                color: '#dcdcdc',
+                overflowX: 'auto',
+              }}
+              wrapLongLines={true}
+              showLineNumbers={true}
+            >
               {data?.code}
             </SyntaxHighlighter>
           </div>
+
         )}
       </div>
     </div>

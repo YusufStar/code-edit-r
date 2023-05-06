@@ -7,7 +7,8 @@ const HomePage = () => {
   const navigate = useNavigate()
   return (
     <>
-      <div className='home_body'>
+      <ParticleAnimation />
+      <div className='cst_body'>
         <Navbar />
         <div className='home_content'>
           <h1 className='home_title'><span>Write Your Code.</span></h1>

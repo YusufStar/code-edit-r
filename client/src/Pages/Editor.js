@@ -108,8 +108,7 @@ const Editor = () => {
   }
 
   const hamdleUpdateFile = async () => {
-    const url = "https://codeeditor-w8wq.onrender.com"
-    const response = await fetch(`${url}/${username}/files/${filename}`, {
+    const response = await fetch(`https://codeeditor-w8wq.onrender.com/${username}/files/${filename}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -141,7 +140,7 @@ const Editor = () => {
   }
 
   return (
-    <div className='cst_body'>
+    <div className='editor_body'>
       <Navbar />
       <div className='editor'>
         <div className='editor_header'>
@@ -227,7 +226,7 @@ const Editor = () => {
             </p>
           </div>
         </div>
-        <div className='editor_body'>
+        <div className='editors_body'>
           <AceEditor
             placeholder="Placeholder Text"
             mode={file?.lang.toLowerCase()}
@@ -245,15 +244,13 @@ const Editor = () => {
               enableSnippets: true,
               showLineNumbers: true,
             }} style={{
-              width: "50%",
-              marginLeft: "24px",
+              width: "100%",
               height: "100%",
             }} />
 
           <SyntaxHighlighter language='powershell' style={atomOneDark} customStyle={{
-            width: "50%%",
+            width: "100%",
             height: "100%",
-            minWidth: "50%",
             padding: "10px"
           }}
             wrapLongLines={true}>

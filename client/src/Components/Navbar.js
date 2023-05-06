@@ -23,7 +23,7 @@ const Navbar = () => {
                     <p onClick={() => navigate("/files")}>Files</p>
                 </div>
                 <div className='navbar_left_links'>
-                    <p onClick={() => navigate("/community")}>Community</p>
+                    <p onClick={() => navigate("/forum")}>Community</p>
                 </div>
             </div>
 

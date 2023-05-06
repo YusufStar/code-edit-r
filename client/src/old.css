@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /*
 kullnılacak renkler
 #1A1A1A (siyah)
@@ -63,15 +59,11 @@ body {
 }
 
 .home_body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    background-color: #1A1A1A;
-    z-index: 0;
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    background-color: #1a1a1a;
+    color: #fff;
 }
 
 .cst_body {
@@ -738,27 +730,18 @@ ion-icon {
 }
 
 .files_body {
-    width: 55%;
-    height: 75%;
-    margin-top: 25px;
+    padding: 20px;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-    background-color: #1A1A1A;
+    overflow-y: auto;
 }
 
 .files_body_header {
-    width: 100%;
-    height: 75px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0 25px;
-    background-color: transparent;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .files_body_header h1 {
@@ -896,6 +879,7 @@ ion-icon {
 
 .new_file_container {
     display: flex;
+    align-items: center;
     z-index: 2;
     gap: 20px;
 }
@@ -904,9 +888,9 @@ ion-icon {
     font-size: 18px;
     font-weight: 600;
     color: #dfdfdf;
-    min-width: 75px;
-    width: auto;
+    width: 250px;
     margin: 0;
+    margin-right: 10px;
 }
 
 .new_file_container ion-icon {
@@ -956,37 +940,6 @@ ion-icon {
     color: red;
 }
 
-.file_search {
-    width: 50%;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-}
-
-.file_search input {
-    width: 100%;
-    height: 100%;
-    padding: 0 25px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #dfdfdf;
-    background-color: transparent;
-    border: 2px solid #dfdfdf;
-    border-radius: 15px;
-    outline: none;
-}
-
-.file_search input:focus {
-    border: 2px solid #4BAF4F;
-}
-
-.file_search ion-icon {
-    font-size: 24px;
-    color: #dfdfdf;
-    margin-left: -50px;
-}
 
 .ai_input_inputs {
     width: 100%;
@@ -1069,68 +1022,299 @@ ion-icon {
 
 .switch_container {
     display: flex;
-  flex-direction: row;
-  gap: 15px;
-  align-items: center;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
 }
 
 .switch {
-  position: relative;
-  display: inline-block;
-  width: 55px;
-  height: 30px;
-  display: flex;
-  align-items: center;
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 30px;
+    display: flex;
+    align-items: center;
 }
 
 .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
 }
 
 .slider:before {
-  position: absolute;
-  content: "";
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
     background-color: #4BAF4F;
 }
 
-input:focus + .slider {
+input:focus+.slider {
     box-shadow: 0 0 1px #4BAF4F;
 }
 
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
 }
 
 .slider.round {
-  border-radius: 34px;
+    border-radius: 34px;
 }
 
 .slider.round:before {
-  border-radius: 50%;
+    border-radius: 50%;
+}
+
+
+.file_search {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.file_search input[type="text"] {
+    background-color: #1E1E1E;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+    width: 300px;
+}
+
+
+.file_search input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    font-size: 16px;
+    padding: 5px 10px;
+    width: 200px;
+    margin-right: 10px;
+}
+
+.new-file-submit {
+    display: flex;
+    align-items: center;
+}
+
+.select-wrapper {
+    position: relative;
+    margin-right: 10px;
+}
+
+.select-inner-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.select-inner-wrapper:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.options-wrapper {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow-y: auto;
+    max-height: 150px;
+}
+
+.option {
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.option:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.option.active {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.selected-value {
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.file-name-input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    font-size: 16px;
+    padding: 5px 10px;
+    width: 200px;
+}
+
+.add-file-button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.add-file-button ion-icon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.add-file-button:hover ion-icon {
+    transform: scale(1.2);
+}
+
+.files_body_files {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.files_body_file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    width: 100px;
+    cursor: pointer;
+}
+
+.files_body_file img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.files_body_file p {
+    font-size: 14px;
+    text-align: center;
+    margin: 0;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file_search input {
+    background-color: #1e1e1e;
+    border: none;
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.new-file-submit {
+    display: flex;
+    align-items: center;
+}
+
+.select-wrapper {
+    position: relative;
+    margin-right: 1rem;
+}
+
+.select-inner-wrapper {
+    background-color: #1e1e1e;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.selected-value {
+    margin-right: 0.5rem;
+}
+
+.options-wrapper {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    background-color: #1e1e1e;
+    padding: 0.5rem;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.option {
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.option:hover,
+.option.active {
+    background-color: #323232;
+}
+
+.file-name-input {
+    background-color: #1e1e1e;
+    border: none;
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    width: 100%;
+    margin-right: 1rem;
+    border-radius: 4px;
+}
+
+.add-file-button {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-file-button ion-icon {
+    font-size: 1.5rem;
+}
+
+
+.add-file-button ion-icon {
+    font-size: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+.add-file-button ion-icon:hover {
+    color: #000;
 }

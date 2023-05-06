@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Navbar from "../Components/Navbar"
 import { useNavigate } from 'react-router-dom'
 import { toast } from "react-hot-toast"
@@ -7,6 +7,34 @@ const Files = () => {
     const [data, Setdata] = useState()
     const navigate = useNavigate()
     const [searchTerm, setSearchTerm] = useState("")
+    const [selectedLang, setSelectedLang] = useState("python")
+    const [optionsOpen, setOptionsOpen] = useState(false);
+    const [fileName, setFileName] = useState("");
+    const optionsWrapperRef = useRef(null);
+
+    const options = [
+        { value: "python", label: "Python" },
+        { value: "javascript", label: "Javascript" },
+    ];
+
+    const handleSelectClick = () => {
+        setOptionsOpen(!optionsOpen);
+    };
+
+    const handleOptionClick = (optionValue) => {
+        setSelectedLang(optionValue);
+        setOptionsOpen(false);
+    };
+
+    const selectedOption = options.find(
+        (option) => option.value === selectedLang
+    );
+
+
+    const handleFileInputChange = (event) => {
+        setFileName(event.target.value);
+    };
+
     const user = JSON.parse(localStorage.getItem("user"))
 
     const getData = async () => {
@@ -22,22 +50,44 @@ const Files = () => {
         if (!user) {
             navigate("/auth/signin")
         } else {
-        getData()
-    }
+            getData()
+            const handleClickOutside = (event) => {
+                if (
+                    optionsWrapperRef.current &&
+                    !optionsWrapperRef.current.contains(event.target)
+                ) {
+                    setOptionsOpen(false);
+                }
+            };
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
     }, [])
 
     const clickFile = (file) => {
         navigate(`/${user.username}/editor/${file._id}`)
     }
 
-    const newFile = async () => {
-        const newtestfile = {
-            filename: `unnamed_${data?.length + 1}.py`,
-            code: `print("welcome to the my project")`,
-            lang: "python"
+    function getFileNameWithExtension(fileName, selectedLang) {
+        if (selectedLang === "python") {
+            return fileName + ".py";
+        } else if (selectedLang === "javascript") {
+            return fileName + ".js";
         }
-        const url = "https://codeeditor-w8wq.onrender.com"
-        const response = await fetch(`${url}/${user.username}/files`, {
+        // Handle other languages if needed
+        return fileName;
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const newtestfile = {
+            filename: getFileNameWithExtension(fileName, selectedLang),
+            code: `${selectedLang.toLocaleLowerCase() == "python" ? "print('Hello World')" : "console.log('Hello World')"}`,
+            lang: selectedLang
+        }
+        const response = await fetch(`https://codeeditor-w8wq.onrender.com/${user.username}/files`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -94,7 +144,7 @@ const Files = () => {
     const renameFile = async (e, file) => {
         e.stopPropagation()
         let filename = ""
-        if(file.lang.toLowerCase() == "python") {
+        if (file.lang.toLowerCase() == "python") {
             filename = file.filename.replace(".py", "")
         } else {
             filename = file.filename.replace(".js", "")
@@ -135,7 +185,7 @@ const Files = () => {
 
     const handleSearch = async (e) => {
         setSearchTerm(e.target.value)
-        if(
+        if (
             e.target.value == "" ||
             e.target.value == null ||
             e.target.value == undefined
@@ -150,24 +200,57 @@ const Files = () => {
     }
 
     return (
-        <div style={{
-            justifyContent: "space-between"
-        }} className='home_body'>
+        <div className='files_main_body'>
             <Navbar />
 
             <div className="files_body">
                 <div className="files_body_header">
-                    <h1>Files</h1>
-                    {/* File Search Section */}
                     <div className="file_search">
                         <input
                             value={searchTerm}
                             onChange={handleSearch}
                             type="text" placeholder="Search Files" />
                     </div>
-                    <div className="new_file_container">
-                        <h2>{data?.length} files</h2>
-                        <ion-icon title="Add New File" onClick={() => newFile()} name="add-outline"></ion-icon>
+                    <div className="new-file-submit">
+                        <form onSubmit={handleSubmit}>
+                            <div className="select-wrapper" ref={optionsWrapperRef}>
+                                <div
+                                    className="select-inner-wrapper"
+                                    onClick={handleSelectClick}
+                                    data-testid="select-inner-wrapper"
+                                >
+                                    <div className="selected-value">{selectedOption.label}</div>
+                                    <ion-icon name="chevron-down-outline"
+                                        className={`${optionsOpen ? "open" : ""}`}
+                                    ></ion-icon>
+                                </div>
+                                {optionsOpen && (
+                                    <div className="options-wrapper">
+                                        {options.map((option) => (
+                                            <div
+                                                key={option.value}
+                                                className={`option ${option.value === selectedLang ? "active" : ""
+                                                    }`}
+                                                onClick={() => handleOptionClick(option.value)}
+                                                data-testid={`option-${option.value}`}
+                                            >
+                                                {option.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Enter file name"
+                                value={fileName}
+                                onChange={handleFileInputChange}
+                                className="file-name-input"
+                            />
+                            <button type="submit" className="add-file-button">
+                                <ion-icon name="add-outline"></ion-icon>
+                            </button>
+                        </form>
                     </div>
                 </div>
                 <div className="files_body_files">
@@ -175,7 +258,7 @@ const Files = () => {
                         return (
                             <div className="files_body_file" onClick={() => clickFile(file)}>
                                 <div className="file_setting_icons">
-                                    <ion-icon title="Delete This File" onClick={(e) => delFile(e, file)} name="add-outline"></ion-icon>
+                                    <ion-icon title="Delete This File" onClick={(e) => delFile(e, file)} name="close-outline"></ion-icon>
                                     <ion-icon title="Rename This File" onClick={(e) => renameFile(e, file)} name="create-outline"></ion-icon>
                                 </div>
                                 <img src="https://cdn2.iconfinder.com/data/icons/font-awesome/1792/code-512.png" />

@@ -16,7 +16,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch('https://codeeditor-w8wq.onrender.com/auth/signup', {
+  const response = await fetch(`https://codeeditor-w8wq.onrender.com/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

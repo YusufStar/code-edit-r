@@ -10,7 +10,7 @@ const Singin = () => {
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch('https://codeeditor-w8wq.onrender.com/auth/signin', {
+      const response = await fetch(`https://codeeditor-w8wq.onrender.com/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
