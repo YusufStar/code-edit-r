@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 
-function CustomSelect({ options, selectedOption, handleSelectClick, handleOptionClick, optionsOpen, setOptionsOpen, optionsWrapperRef }) {
+function CustomSelect({ options, selectedOption, handleSelectClick, handleOptionClick, optionsOpen, setOptionsOpen, customStyle }) {
+  const optionsWrapperRef = useRef()
   
     function handleWrapperClick(e) {
-      if (optionsWrapperRef.current && !optionsWrapperRef.current.contains(e.target)) {
+      if (optionsWrapperRef?.current && !optionsWrapperRef?.current.contains(e.target)) {
         setOptionsOpen(false);
       }
     }
@@ -13,35 +14,36 @@ function CustomSelect({ options, selectedOption, handleSelectClick, handleOption
       return () => {
         document.removeEventListener("click", handleWrapperClick);
       };
-    }, []);
+    });
   
-    const { label, value: lang } = selectedOption;
+    const { value: lang } = selectedOption;
   
     return (
-      <div className="select-wrapper" ref={optionsWrapperRef}>
-        <div
-          className="select-inner-wrapper"
-          onClick={handleSelectClick}
-          data-testid="select-inner-wrapper"
-        >
-          <div className="selected-value">{label}</div>
-          <ion-icon name="chevron-down-outline"></ion-icon>
-        </div>
-        {optionsOpen && (
-          <div className="options-wrapper">
-            {options.map((option) => (
+      <div className="select-wrapper" style={{...customStyle}} ref={optionsWrapperRef}>
               <div
-                key={option.value}
-                className={`option ${option.value === lang ? "active" : ""}`}
-                onClick={() => handleOptionClick(option.value)}
-                data-testid={`option-${option.value}`}
+                className="select-inner-wrapper"
+                onClick={handleSelectClick}
+                data-testid="select-inner-wrapper"
               >
-                {option.label}
+                <div className="selected-value">{selectedOption.label}</div>
+                <ion-icon name="chevron-down-outline"></ion-icon>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              {optionsOpen && (
+                <div className="options-wrapper">
+                  {options.map((option) => (
+                    <div
+                      key={option.value}
+                      className={`option ${option.value === lang ? "active" : ""
+                        }`}
+                      onClick={() => handleOptionClick(option.value)}
+                      data-testid={`option-${option.value}`}
+                    >
+                      {option.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
     );
   }
   

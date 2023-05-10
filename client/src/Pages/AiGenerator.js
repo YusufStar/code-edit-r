@@ -4,6 +4,7 @@ import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs"
 import SyntaxHighlighter from "react-syntax-highlighter"
 import { toast } from "react-hot-toast"
 import { useNavigate } from 'react-router-dom'
+import CustomSelect from '../Components/CustomSelect'
 
 const AiGenerator = () => {
   const [text, setText] = useState("")
@@ -137,31 +138,16 @@ const AiGenerator = () => {
       <div className='ai_content'>
         <form onSubmit={handleSubmit} className="ai_input_body">
           <div className="ai_input_inputs">
-            <div className="select-wrapper" ref={optionsWrapperRef}>
-              <div
-                className="select-inner-wrapper"
-                onClick={handleSelectClick}
-                data-testid="select-inner-wrapper"
-              >
-                <div className="selected-value">{selectedOption.label}</div>
-                <ion-icon name="chevron-down-outline"></ion-icon>
-              </div>
-              {optionsOpen && (
-                <div className="options-wrapper">
-                  {options.map((option) => (
-                    <div
-                      key={option.value}
-                      className={`option ${option.value === lang ? "active" : ""
-                        }`}
-                      onClick={() => handleOptionClick(option.value)}
-                      data-testid={`option-${option.value}`}
-                    >
-                      {option.label}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <CustomSelect
+              options={options}
+              selectedOption={selectedOption}
+              handleSelectClick={handleSelectClick}
+              handleOptionClick={handleOptionClick}
+              optionsOpen={optionsOpen}
+              setOptionsOpen={setOptionsOpen}
+              lang={lang}
+            />
+
             <input
               required
               className='ai_input_message'

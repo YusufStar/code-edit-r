@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import CustomSelect from './CustomSelect';
 
 const PostModal = ({ handleClose, getPosts }) => {
     const [title, setTitle] = useState('');
@@ -10,7 +11,6 @@ const PostModal = ({ handleClose, getPosts }) => {
     const [optionsOpen, setOptionsOpen] = useState(false);
     const [optionsFilesOpen, setOptionsFilesOpen] = useState(false);
     const [filename, setFilename] = useState('');
-    const [hamData, setHamData] = useState([])
     const [files, setFiles] = useState([]);
 
     const options = [
@@ -33,9 +33,7 @@ const PostModal = ({ handleClose, getPosts }) => {
             .then((response) => response.json())
             .then((data) => {
                 const files = data?.filter((file) => file.Ispublic === true)
-                setHamData(files)
-                const filteredFilesWithLang = files.filter((file) => file.lang.toLowerCase() === selectedOption.value.toLowerCase())
-                setFiles(filteredFilesWithLang)
+                setFiles(files)
             })
             .catch((error) => console.error(error));
     };
@@ -65,7 +63,7 @@ const PostModal = ({ handleClose, getPosts }) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ title, description: content, lang })
+            body: JSON.stringify({ title, description: content, lang: lang })
         })
             .then((response) => response.json())
             .then((data) => {
@@ -102,8 +100,6 @@ const PostModal = ({ handleClose, getPosts }) => {
     const handleOptionClick = (optionValue) => {
         setOptionsOpen(false);
         setLang(optionValue);
-        const filteredFilesWithLang = hamData.filter((file) => file.lang.toLowerCase() == optionValue.toLowerCase())
-        setFiles(filteredFilesWithLang)
     };
 
     const handleSelectFilesClick = () => {
@@ -135,32 +131,18 @@ const PostModal = ({ handleClose, getPosts }) => {
                         required
                     />
 
-                    <div className='select-wrapper' ref={optionsWrapperRef}>
-                        <div
-                            className='select-inner-wrapper'
-                            onClick={handleSelectClick}
-                            data-testid='select-inner-wrapper'
-                        >
-                            <div className='selected-value'>{selectedOption.label}</div>
-                            <ion-icon name='chevron-down-outline'></ion-icon>
-                        </div>
-                        {optionsOpen && (
-                            <div className='options-wrapper'>
-                                {options.map((option) => (
-                                    <div
-                                        key={option.value}
-                                        className={`option ${option.value === lang ? 'active' : ''}`}
-                                        onClick={() => handleOptionClick(option.value)}
-                                    >
-                                        {option.label}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    <div style={{
+                    <CustomSelect
+                        options={options}
+                        selectedOption={selectedOption}
+                        handleSelectClick={handleSelectClick}
+                        setOptionsOpen={setOptionsOpen}
+                        handleOptionClick={handleOptionClick}
+                        optionsOpen={optionsOpen}
+                        lang={lang}
+                    />
+                    <div className='select-wrapper' style={{
                         marginTop: "10px"
-                    }} className='select-wrapper' ref={optionsFilesWrapperRef}>
+                    }} ref={optionsFilesWrapperRef}>
                         <div
                             className='select-inner-wrapper'
                             onClick={handleSelectFilesClick}
@@ -171,7 +153,9 @@ const PostModal = ({ handleClose, getPosts }) => {
                         </div>
                         {optionsFilesOpen && (
                             <div className='options-wrapper'>
-                                {files.map((file) => (
+                                {files
+                                .filter((file) => file.lang.toLowerCase() == lang.toLowerCase())
+                                .map((file) => (
                                     <div
                                         key={file.filename}
                                         className={`option ${file.filename === selectedFile ? 'active' : ''}`}

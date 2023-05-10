@@ -8,6 +8,7 @@ import Signup from "./Pages/Signup"
 import { Toaster } from "react-hot-toast"
 import Files from './Pages/Files';
 import Forum from './Pages/Forum';
+import Post from './Pages/Post';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path='/auth/signup' element={<Signup />} />
           <Route path='/files' element={<Files />} />
           <Route path='/forum' element={<Forum />} />
+          <Route path='/post/:id' element={<Post />} />
         </Routes>
       </>
     </BrowserRouter>

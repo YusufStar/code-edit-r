@@ -51,6 +51,10 @@ const ForumSchema = new Mongoose.Schema({
     ref: 'File',
     required: true,
   },
+  lang: {
+    type: String,
+    required: true,
+  },
   comments: [{
     username: {
       type: String,

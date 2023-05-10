@@ -18,8 +18,7 @@ const Forum = () => {
   const selectedOption = options.find(
     (option) => option.value === lang
   );
-{/* Get forums data */}
-  const getPosts = async (lang) => {
+  const getPosts = async () => {
     const response = await fetch(`https://codeeditor-w8wq.onrender.com/forums`, {
       method: 'GET',
       headers: {
@@ -57,15 +56,6 @@ const Forum = () => {
     getPosts(optionValue)
   };
 
-  const handleSearch = (value) => {
-    setSearchValue(value)
-    const filtered = filteredPosts.filter(post => post.title.includes(value.toLowerCase()))
-    setFilteredPosts(filtered)
-    if(value == "") {
-      getPosts()
-    }
-  }
-
   return (
     <div className='forum_body'>
       {postModalOpen && <PostModal getPosts={getPosts} handleClose={() => setPostModalOpen(false)} />}
@@ -77,7 +67,7 @@ const Forum = () => {
             placeholder="Search ın forums"
             className="forum_search"
             value={searchValue}
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
           <CustomSelect
             options={options}
@@ -85,7 +75,6 @@ const Forum = () => {
             handleSelectClick={handleSelectClick}
             handleOptionClick={handleOptionClick}
             optionsOpen={optionsOpen}
-            optionsWrapperRef={optionsWrapperRef}
             setOptionsOpen={setOptionsOpen}
           />
           <button onClick={() => setPostModalOpen(!postModalOpen)} className="add-file-button ml-auto">
@@ -93,23 +82,20 @@ const Forum = () => {
           </button>
         </div>
         <div className="forum_posts_container">
-          {filteredPosts?.map(post => (
-            <>
-            <div className="forum_post" key={post._id}>
-              <div className="post_header">
-              <h3>{post.title}</h3>
-              <p>{post.username}</p>
+          {filteredPosts
+            ?.filter((file) => file?.title?.toLowerCase().includes(searchValue.toLowerCase()))
+            ?.filter((post) => post?.lang?.toLowerCase() === selectedOption?.value?.toLowerCase())
+            ?.map(post => (
+              <div
+                onClick={() => window.location.href = `/post/${post._id}`}
+              className="forum_post" key={post._id}>
+                <div className="post_header">
+                  <h3>{post.title}</h3>
+                  <p>{post.username}</p>
+                </div>
+                <p className='desc'>{post.description}</p>
               </div>
-              <p className='desc'>{post.description}</p>
-            </div><div className="forum_post" key={post._id}>
-              <div className="post_header">
-              <h3>{post.title}</h3>
-              <p>{post.username}</p>
-              </div>
-              <p className='desc'>{post.description}</p>
-            </div>
-            </>
-          ))}
+            ))}
         </div>
       </div>
     </div>
