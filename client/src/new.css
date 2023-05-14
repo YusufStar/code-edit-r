@@ -1063,6 +1063,13 @@ ion-icon {
   margin: 0px 5px;
 }
 
+.divider_row {
+  height: 1px;
+  width: 100%;
+  background-color: #bfbfbf;
+  margin: 5px 0px;
+}
+
 .switch_container {
   display: flex;
   align-items: center;
@@ -1495,10 +1502,11 @@ ace_variable.ace_parameter {
 .post_body {
   display: flex;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  height: auto;
   overflow-y: hidden;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   background-color: #1c1c1c;
   color: #e6e6e6;
 }
@@ -1509,10 +1517,158 @@ ace_variable.ace_parameter {
   align-items: center;
   justify-content: center;
   margin-top: 80px;
-  min-height: calc(100vh - 100px);
   height: auto;
   width: 50%;
   padding: 20px;
+  margin-bottom: 20px;
   background-color: #2d2d2d;
   box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.75);
+}
+
+.post_header {
+  width: 100%;
+  height: auto;
+}
+
+/* Başlık */
+.post_header h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Tarih */
+.post_header p {
+  cursor: text;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Ana içerik alanı */
+.post_content {
+  width: 100%;
+  height: auto;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post_content > p {
+  cursor: text;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+/* Kod alanı */
+.post_code {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #222;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+/* Kod adı */
+.post_code p {
+  font-size: 16px;
+  margin: 0 0 10px;
+  cursor: text;
+}
+
+/* Kod bloğu satır numaraları */
+.CodeBlock .line-number {
+  color: #aaa;
+  font-size: 12px;
+  margin-right: 10px;
+}
+
+.post_comments_body {
+  width: 100%;
+  height: auto;
+  background-color: #111;
+}
+
+/* Yorumlar */
+.post_comments_body {
+  background-color: #333;
+  padding: 20px;
+  border-radius: 5px;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Yorum formu */
+.post_comments_form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Yorum metni girişi */
+.comment_input {
+  background-color: #444;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  flex: 1;
+  border-radius: 5px;
+}
+
+/* Gönder butonu */
+.post_comments_form button {
+  background-color: #777;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.post_comments_form button:hover {
+  background-color: #555;
+}
+
+/* Yorum Temeli */
+.post_comment {
+  background-color: #333;
+  padding: 10px;
+  border: 1px solid #b1b1b1;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+/* Yorum başlığı */
+.post_comment_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.post_comment_header h2 {
+  font-size: 18px;
+  color: #bfbfbf;
+  margin: 0;
+}
+
+.post_comment_header p {
+  font-size: 14px;
+  color: #b1b1b1;
+  margin: 0;
+}
+
+/* Yorum metni */
+.post_comment p {
+  margin: 0;
+}
+
+.message {
+  font-size: 16px;
+  color: #fff;
+  margin: 0;
 }

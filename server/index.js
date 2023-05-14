@@ -433,6 +433,48 @@ app.get("/forums", async (req, res) => {
   }
 });
 
+app.post("/forum/:id/comments", async (req, res) => {
+  const { username, message } = req.body;
+  const { id } = req.params;
+  try {
+    const forum = await Forum.findById(id);
+    forum.comments.push({ username, message });
+    await forum.save();
+    res.status(201).json(forum);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+app.put("/forum/:id/comments/:commentId", async (req, res) => {
+  const { message } = req.body;
+  const { id, commentId } = req.params;
+  try {
+    const forum = await Forum.findById(id);
+    const comment = forum.comments.id(commentId);
+    comment.message = message;
+    await forum.save();
+    res.status(200).json(forum);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+app.delete("/forum/:id/comments/:commentId", async (req, res) => {
+  const { id, commentId } = req.params;
+  try {
+    const forum = await Forum.findById(id);
+    const comment = forum.comments.id(commentId);
+    comment.remove();
+    await forum.save();
+    res.status(200).json(forum);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
 
 const PORT = process.env.PORT || 3333
 

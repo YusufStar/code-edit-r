@@ -217,7 +217,7 @@ const AiGenerator = () => {
         ) : (
           <div className='ai_res_div' style={{ position: 'relative' }}>
             <SyntaxHighlighter
-              language='python'
+              language={data?.lang.toLowerCase()}
               style={atomOneDark}
               customStyle={{
                 width: '750px',
